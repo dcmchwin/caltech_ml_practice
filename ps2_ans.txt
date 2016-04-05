@@ -1,0 +1,8 @@
+Simple
+1. [b]
+2. [d]
+
+
+Verbose
+1. mean of nu_min comes out to 0.038
+2. c_min does not have representative in-sample mean as, by selection, it's input distribution has been warped
