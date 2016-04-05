@@ -6,6 +6,7 @@ Problems requiring computational solutions are 1, 2.
 
 import matplotlib.pyplot as plt
 import numpy as np
+import vector
 
 
 def heof(n_coins=1000, n_flips=10, n_experiments=100000):
@@ -58,6 +59,16 @@ def lin_reg():
             in_prod = np.inner(dat, coef)
             return (in_prod > 0) * 2 - 1
         return map
+
+    def get_rand_coords(dim=2, n_points=2):
+        temp = [2 * np.random.rand(dim) - 1 for i in range(0, n_points)]
+        return [np.append(t, [1]) for t in temp]
+
+    f_coords = get_rand_coords()
+    f_n = vector.n_d_cross(*f_coords)
+    print f_n
+    f_n = f_n[:-1]
+    print f_n
     x = np.array([1, 1, 1])
     f = classifier(np.array([1, 1, 1]))
     g = classifier(np.array([-1, -1, -1]))
