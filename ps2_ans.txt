@@ -1,8 +1,12 @@
 Simple
 1. [b]
 2. [d]
+5. [c]
+6. [c]
 
 
 Verbose
 1. mean of nu_min comes out to 0.038
 2. c_min does not have representative in-sample mean as, by selection, it's input distribution has been warped
+5. avg_err of 1000 experiments in range 0.015 -> 0.035 or so
+6. avg_err 

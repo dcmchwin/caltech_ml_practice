@@ -20,9 +20,6 @@ def n_d_cross(*args):
 
     input: d-1 numpy vectors of dimension d
     """
-
-    print(type(args))
-
     d = len(args[0])
     # print d
     n = len(args)
@@ -42,6 +39,16 @@ def n_d_cross(*args):
         v[i] = np.linalg.det(A) * (2 * np.mod(i, 2) - 1)
 
     return v
+
+
+def get_pseudo_inverse(x):
+    """Return the pseudo-inverse of a n by d numpy array."""
+    xt = np.transpose(x)
+    xtx = np.dot(xt, x)
+    xtx_inv = np.linalg.inv(xtx)
+    x_pseudo_inv = np.dot(xtx_inv, xt)
+    return x_pseudo_inv
+
 
 if __name__ == "__main__":
     test = np.array([1, 0, 0])

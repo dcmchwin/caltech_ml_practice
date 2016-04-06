@@ -52,13 +52,13 @@ def heof(n_coins=1000, n_flips=10, n_experiments=100000):
     plt.show()
 
 
-def lin_reg():
+def lin_reg(n_points=100, n_experiments=10):
     """Solve problems 5 and 6 on Linear Regression."""
     def classifier(coef):
-        def map(dat):
+        def inner(dat):
             in_prod = np.inner(dat, coef)
             return (in_prod > 0) * 2 - 1
-        return map
+        return inner
 
     def get_rand_coords(dim=2, n_points=2):
         return [2 * np.random.rand(dim) - 1 for i in range(0, n_points)]
@@ -69,24 +69,72 @@ def lin_reg():
         f_n = vector.n_d_cross(*f_coords_plus)
         f_n = f_n[:-1]
         f_n = f_n / np.linalg.norm(f_n)
-        b0 = np.inner(f_n, f_coords[0])
-        b1 = np.inner(f_n, f_coords[1])
-        b10 = np.inner(f_n, f_coords[1] - f_coords[0])
-        print "f_coords[0]: ", f_coords[0]
-        print "f_coords[1]: ", f_coords[1]
-        print "f_coords[1] - f_coords[0]: ", f_coords[1] - f_coords[0]
-        print "f_n: ", f_n
-        print "b0: ", b0
-        print "b1: ", b1
-        print "b10: ", b10
-    
-    f_n = gen_decision_normal()
+        b = np.inner(f_n, f_coords[0])
+        f_n = np.append(f_n, b)
+        return f_n
 
-    x = np.array([1, 1, 1])
-    f = classifier(np.array([1, 1, 1]))
-    g = classifier(np.array([-1, -1, -1]))
-    print(f(x))
-    print(g(x))
+    def get_row(np_arr_list, i):
+        # take in a list of np arrays and return a certain row thereof
+        return [x[i] for x in np_arr_list]
+
+    def scatter_points(x_list, y_list):
+        z = [0.5 * (el + 1) for el in y_list]
+        cols = plt.cm.coolwarm(z)
+        plt.scatter(get_row(x_list, 0), get_row(x_list, 1), color=cols)
+        plt.show()
+
+    def get_linreg_boundary(X, y):
+        X_pseudo_inv = vector.get_pseudo_inverse(X)
+        return np.dot(X_pseudo_inv, y)
+
+    def problem5(n_points, n_experiments, f):
+        print "Problem 5..."
+        g_n_list = []
+        avg_err = 0
+        for i in range(0, n_experiments):
+            x_list = get_rand_coords(n_points=n_points)
+            x_list_2 = [np.append(x, [1]) for x in x_list]
+            y_list = [f(x) for x in x_list_2]
+
+            X = np.vstack(x_list_2)
+            y = np.hstack(y_list)
+
+            g_n = get_linreg_boundary(X, y)
+            g = classifier(g_n)
+            g_n_list.append(g_n)
+
+            y_g = [g(x) for x in x_list_2]
+
+            err = sum((y != y_g)) / float(n_points)
+
+            avg_err = avg_err + err / float(n_experiments)
+
+        print "avg_err: ", avg_err
+        return g_n_list
+
+    def problem6(n_points, n_experiments, f, g_n_list):
+        print "Problem 6..."
+        avg_err = 0
+        for i in range(0, n_experiments):
+            x_list = get_rand_coords(n_points=n_points)
+            x_list_2 = [np.append(x, [1]) for x in x_list]
+            g_n = g_n_list[i]
+            g = classifier(g_n)
+
+            y_f = np.hstack([f(x) for x in x_list_2])
+            y_g = [g(x) for x in x_list_2]
+
+            err = sum((y_f != y_g)) / float(n_points)
+
+            avg_err = avg_err + err / float(n_experiments)
+        print "avg_err: ", avg_err
+
+    f_n = gen_decision_normal()
+    f = classifier(np.array(f_n))
+
+    g_n_list = problem5(n_points, n_experiments, f)
+    problem6(1000, 1000, f, g_n_list)
+
 
 
 def perform_chosen_function(choice=0):
@@ -94,7 +142,7 @@ def perform_chosen_function(choice=0):
     if choice == 0:
         heof()
     elif choice == 1:
-        lin_reg()
+        lin_reg(n_experiments=1000)
 
 
 if __name__ == "__main__":
