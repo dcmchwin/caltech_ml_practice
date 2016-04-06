@@ -61,14 +61,27 @@ def lin_reg():
         return map
 
     def get_rand_coords(dim=2, n_points=2):
-        temp = [2 * np.random.rand(dim) - 1 for i in range(0, n_points)]
-        return [np.append(t, [1]) for t in temp]
+        return [2 * np.random.rand(dim) - 1 for i in range(0, n_points)]
 
-    f_coords = get_rand_coords()
-    f_n = vector.n_d_cross(*f_coords)
-    print f_n
-    f_n = f_n[:-1]
-    print f_n
+    def gen_decision_normal():
+        f_coords = get_rand_coords()
+        f_coords_plus = [np.append(t, [1]) for t in f_coords]
+        f_n = vector.n_d_cross(*f_coords_plus)
+        f_n = f_n[:-1]
+        f_n = f_n / np.linalg.norm(f_n)
+        b0 = np.inner(f_n, f_coords[0])
+        b1 = np.inner(f_n, f_coords[1])
+        b10 = np.inner(f_n, f_coords[1] - f_coords[0])
+        print "f_coords[0]: ", f_coords[0]
+        print "f_coords[1]: ", f_coords[1]
+        print "f_coords[1] - f_coords[0]: ", f_coords[1] - f_coords[0]
+        print "f_n: ", f_n
+        print "b0: ", b0
+        print "b1: ", b1
+        print "b10: ", b10
+    
+    f_n = gen_decision_normal()
+
     x = np.array([1, 1, 1])
     f = classifier(np.array([1, 1, 1]))
     g = classifier(np.array([-1, -1, -1]))

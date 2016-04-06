@@ -1,6 +1,7 @@
 """Module to hold mathematical vector utilities."""
 import numpy as np
 
+
 class MyError(Exception):
     """Define custom exceptions."""
 
@@ -38,7 +39,7 @@ def n_d_cross(*args):
     # define tuple of matrices
     for i in range(0, d):
         A = np.vstack([np.append(a[:i], a[i + 1:]) for a in args])
-        v[i] = np.linalg.det(A)
+        v[i] = np.linalg.det(A) * (2 * np.mod(i, 2) - 1)
 
     return v
 
