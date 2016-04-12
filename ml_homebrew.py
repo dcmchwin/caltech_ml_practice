@@ -80,7 +80,7 @@ def perceptron_train(X, y, N=100, r=1, v0=[], to_plot=0, to_debug=0):
             print "y: ", y
             print "y * (h_x != y): ", y * (h_x != y)
 
-
+    return v_opt, E_opt
 
     # plot output if specified to do so
     if to_plot:
@@ -107,7 +107,9 @@ def perceptron_test():
     # get labels
     y = f(X2)
 
-    perceptron_train(X, y, N=50, r=1, to_plot=0, to_debug=0)
+    v_out, _ = perceptron_train(X, y, N=50, r=1, to_plot=0, to_debug=0)
+
+    print "returned v: ", v_out
 
 
 def nrz_classifier(coef):
