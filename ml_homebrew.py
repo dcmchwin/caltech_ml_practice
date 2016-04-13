@@ -15,19 +15,42 @@ class MyError(Exception):
         return repr(self.value)
 
 
-def perceptron_train(X, y, N=100, r=1, v0=[], to_plot=0, to_debug=0):
+class PerceptronParameters():
+    """Class to hold parameters used in perceptron algorithm."""
+
+    def __init__(self, to_plot=0, to_debug=0, to_pla=0):
+        """Get parameters."""
+        self.to_plot = to_plot
+        self.to_debug = to_debug
+        self.to_pla = to_pla
+
+    def __repr__(self):
+        """Define representation."""
+        le_str = ("PerceptronParameters instance with properties:" +
+                  "\nto_plot: " + str(self.to_plot) +
+                  "\nto_debug: " + str(self.to_debug) +
+                  "\nto_pla: " + str(self.to_pla))
+        return le_str
+
+
+def perceptron_train(X, y, N=100, r=1, v0=[], params=PerceptronParameters()):
     """Train a perceptron learning algorithm with some input data.
 
     Arguments
     ---------
-    X:          Input training data, as an N x d or N x d+1 numpy array
-    y:          Input training labels, as an N x 1 numpy array
-    [N]:        Maximum number of iterations to loop over
-    [r]:        Learning rate: scalar value between 0 and 1
-    [v0]:       Initial guess at classification boundary, zeros if unspecified
-    [to_plot]:  Parameter indicating whether or not to plot out points and
-                graphs
-    [to_debug]: Parameter indicating whether or not to show debug info
+    X:              Input training data, as an N x d or N x d+1 numpy array
+    y:              Input training labels, as an N x 1 numpy array
+    [N]:            Maximum number of iterations to loop over
+    [r]:            Learning rate: scalar value between 0 and 1
+    [v0]:           Initial guess at classification boundary,
+                    zeros if unspecified.
+    [params:]       Parameter object with properties:
+        to_plot:        Boolean for whether to plot,
+                        default 0
+        to_debug:       Boolean for whether to display debug info,
+                        default 0
+        to_pla:         Boolean for whether to convert perceptron to pocket
+                        learning algorithm, default 0
 
     Outputs
     -------
@@ -55,12 +78,11 @@ def perceptron_train(X, y, N=100, r=1, v0=[], to_plot=0, to_debug=0):
     v = v0
 
     # initialise error vector, E
-    E = np.ones(N)
+    E = 1
 
     # to keep track of best optimisation boundary and corresponding index in E
     v_opt = v
     E_opt = 1
-    i_opt = 0
 
     for i in range(0, N):
         # get classification labels, h_x
@@ -68,22 +90,19 @@ def perceptron_train(X, y, N=100, r=1, v0=[], to_plot=0, to_debug=0):
         h_x = h(X)
         # only update where h_x != y
         v = v + r * np.dot(y * (h_x != y), X)
-        E[i] = sum(y != h_x) / float(n)
+        E = sum(y != h_x) / float(n)
         # update optimum boundary
-        if E[i] < E_opt:
-            E_opt = E[i]
+        if E < E_opt:
+            E_opt = E
             v_opt = v
-            i_opt = i
-        if to_debug:
-            print "v: ", v
-            print "h_x: ", h_x
-            print "y: ", y
-            print "y * (h_x != y): ", y * (h_x != y)
 
-    return v_opt, E_opt
+    if params.to_pla:
+        return v_opt, E_opt
+    else:
+        return v, E
 
     # plot output if specified to do so
-    if to_plot:
+    if params.to_plot:
         z = 0.5 * (y + 1)
         cols = plt.cm.coolwarm(z)
         plt.scatter(X[:, 0], X[:, 1], color=cols)
@@ -107,7 +126,10 @@ def perceptron_test():
     # get labels
     y = f(X2)
 
-    v_out, _ = perceptron_train(X, y, N=50, r=1, to_plot=0, to_debug=0)
+    # instanciate parameter object:
+    params = PerceptronParameters(to_plot=1, to_debug=0, to_pla=1)
+
+    v_out, _ = perceptron_train(X, y, N=50, r=1, params=params)
 
     print "returned v: ", v_out
 

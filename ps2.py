@@ -1,12 +1,13 @@
 """
 Module to hold homework set 2 problems.
 
-Problems requiring computational solutions are 1, 2.
+Problems requiring computational solutions are 1, 2, 5, 6, 7
 """
 
 import matplotlib.pyplot as plt
 import numpy as np
 import vector
+import ml_homebrew as hb
 
 
 def heof(n_coins=1000, n_flips=10, n_experiments=100000):
@@ -129,12 +130,14 @@ def lin_reg(n_points=100, n_experiments=10):
             avg_err = avg_err + err / float(n_experiments)
         print "avg_err: ", avg_err
 
+    def problem7():
+        pass
+
     f_n = gen_decision_normal()
     f = classifier(np.array(f_n))
 
     g_n_list = problem5(n_points, n_experiments, f)
     problem6(1000, 1000, f, g_n_list)
-
 
 
 def perform_chosen_function(choice=0):
